@@ -117,15 +117,14 @@ codeunit 62036 D4PBCAdminAPIClient
         Content: JsonToken;
         ResponseText: Text;
     begin
-        ResponseText := HttpResponseMessage.GetContent().AsText();
         if HttpResponseMessage.GetIsSuccessStatusCode() then begin
-            if ResponseText <> '' then
-                Response.ReadFrom(ResponseText);
+            Response := HttpResponseMessage.GetContent().AsJsonObject();
             exit;
         end;
 
         Response.Add('statusCode', HttpResponseMessage.GetHttpStatusCode());
         Response.Add('reasonPhrase', HttpResponseMessage.GetReasonPhrase());
+        ResponseText := HttpResponseMessage.GetContent().AsText();
         if ResponseText = '' then
             exit;
         if Content.ReadFrom(ResponseText) then
